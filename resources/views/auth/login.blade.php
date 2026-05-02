@@ -16,6 +16,8 @@
 
     <!-- Custom styles -->
     <link href="{{ asset('sbadmin2/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon-mpp.png') }}">
+
 </head>
    
 

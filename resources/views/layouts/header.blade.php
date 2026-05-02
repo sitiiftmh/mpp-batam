@@ -21,7 +21,7 @@
     <link href="{{asset('sbadmin2/css/sb-admin-2.min.css')}}" rel="stylesheet">
     <link href="{{asset('sbadmin2/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 
-    <!-- Tambahkan baris ini -->
+    <!-- baris favicon logo -->
 <link rel="icon" type="image/png" href="{{ asset('img/favicon-mpp.png') }}">
 
 </head>
