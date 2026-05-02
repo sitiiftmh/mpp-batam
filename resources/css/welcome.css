@@ -1,0 +1,29 @@
+/* Card layanan */
+.service-card{
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 15px 10px;
+    transition: 0.3s;
+    height: 120px;
+}
+
+/* Efek hover biar lebih hidup */
+.service-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.service-card img{
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+/* Nama layanan */
+.service-card p{
+    font-size: 13px;
+    margin: 0;
+    font-weight: 500;
+}
