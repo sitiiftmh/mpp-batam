@@ -42,52 +42,58 @@
                     </button>
                 </div>
 
-<div class="table-responsive">
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-        <thead class="bg-primary text-white">
-            <tr class="text-center">
-                <th width="30px">No</th>
-                <th width="100px">Tanggal Input</th>
-                <th width="120px">Petugas</th>
-                <th width="200px">Instansi</th>
-                <th width="250px">Jenis Layanan</th>
-                <th width="80px">Jumlah Layanan</th>
-                <th width="100px">Jumlah Kunjungan</th>
-                <th width="170px">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($pendingList as $item)
-            <tr>
-                <td class="text-center">{{ $loop->iteration }}</td>
-                <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
-                <td>{{ $item->user->nama ?? '-' }}</td>
-                <td>{{ $item->instansi->nama_instansi ?? '-' }}</td>
-                <td>{{ $item->jenisLayanan->nama_layanan ?? '-' }}</td>
-                <td class="text-center">{{ $item->jumlah_layanan }}</td>
-                <td class="text-center">{{ $item->jumlah_kunjungan }}</td>
-                <td class="text-center" style="min-width: 160px;">
-                    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap;">
-                        <form action="{{ route('verifikasi.setujui', $item->id) }}" method="POST" style="display:inline-block; margin:0;">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success" style="padding: 4px 10px; white-space: nowrap;" onclick="return confirm('Setujui data ini?')">
-                                <i class="fas fa-check"></i> Setuju
-                            </button>
-                        </form>
-                        <button type="button" class="btn btn-sm btn-danger" style="padding: 4px 10px; white-space: nowrap;" onclick="tolakData({{ $item->id }})">
-                            <i class="fas fa-times"></i> Tolak
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="8" class="text-center">Tidak ada data pending.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="bg-primary text-white">
+                            <tr class="text-center">
+                                <th width="30px">
+                                    <input type="checkbox" id="checkAll">
+                                </th>
+                                <th width="30px">No</th>
+                                <th width="100px">Tanggal Input</th>
+                                <th width="120px">Petugas</th>
+                                <th width="200px">Instansi</th>
+                                <th width="250px">Jenis Layanan</th>
+                                <th width="80px">Jumlah Layanan</th>
+                                <th width="100px">Jumlah Kunjungan</th>
+                                <th width="170px">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($pendingList as $item)
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" name="ids[]" value="{{ $item->id }}" class="checkbox-item">
+                                </td>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
+                                <td>{{ $item->user->nama ?? '-' }}</td>
+                                <td>{{ $item->instansi->nama_instansi ?? '-' }}</td>
+                                <td>{{ $item->jenisLayanan->nama_layanan ?? '-' }}</td>
+                                <td class="text-center">{{ $item->jumlah_layanan }}</td>
+                                <td class="text-center">{{ $item->jumlah_kunjungan }}</td>
+                                <td class="text-center" style="min-width: 160px;">
+                                    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap;">
+                                        <form action="{{ route('verifikasi.setujui', $item->id) }}" method="POST" style="display:inline-block; margin:0;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" style="padding: 4px 10px; white-space: nowrap;" onclick="return confirm('Setujui data ini?')">
+                                                <i class="fas fa-check"></i> Setuju
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-danger" style="padding: 4px 10px; white-space: nowrap;" onclick="tolakData({{ $item->id }})">
+                                            <i class="fas fa-times"></i> Tolak
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="9" class="text-center">Tidak ada data pending.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </form>
         </div>
     </div>
