@@ -150,7 +150,7 @@
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6>Diagram Kunjungan</h6>
+                <h6>Diagram Kunjungan ({{ $periodeText }})</h6>
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
@@ -158,7 +158,7 @@
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6>Trend Kunjungan (5 hari terakhir)</h6>
+                <h6>Trend Kunjungan ({{ $periodeText }})</h6>
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
@@ -173,11 +173,7 @@
         <div class="table-responsive">
             <table class="table table-bordered table-sm mt-3">
                 <thead class="table-light">
-                    <tr>
-                        <th>Instansi</th>
-                        <th>Layanan</th>
-                        <th>Kunjungan</th>
-                    </tr>
+                    <tr><th>Instansi</th><th>Layanan</th><th>Kunjungan</th></tr>
                 </thead>
                 <tbody>
                     @forelse($trendData as $item)
@@ -187,9 +183,7 @@
                         <td>{{ number_format($item->total_kunjungan) }}</td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="3" class="text-center">Belum ada data</td>
-                    </tr>
+                    <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
                     @endforelse
                 </tbody>
             </table>

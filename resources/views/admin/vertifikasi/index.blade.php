@@ -73,17 +73,14 @@
                                 <td class="text-center">{{ $item->jumlah_layanan }}</td>
                                 <td class="text-center">{{ $item->jumlah_kunjungan }}</td>
                                 <td class="text-center" style="min-width: 160px;">
-                                    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap;">
-                                        <form action="{{ route('verifikasi.setujui', $item->id) }}" method="POST" style="display:inline-block; margin:0;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" style="padding: 4px 10px; white-space: nowrap;" onclick="return confirm('Setujui data ini?')">
-                                                <i class="fas fa-check"></i> Setuju
-                                            </button>
-                                        </form>
-                                        <button type="button" class="btn btn-sm btn-danger" style="padding: 4px 10px; white-space: nowrap;" onclick="tolakData({{ $item->id }})">
-                                            <i class="fas fa-times"></i> Tolak
-                                        </button>
-                                    </div>
+                                <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap;">
+                                   <button type="button" class="btn btn-sm btn-success" style="padding: 4px 10px; white-space: nowrap;" onclick="setujuiData({{ $item->id }})">
+                                       <i class="fas fa-check"></i> Setuju
+                                   </button>
+                                    <button type="button" class="btn btn-sm btn-danger" style="padding: 4px 10px; white-space: nowrap;" onclick="tolakData({{ $item->id }})">
+                                        <i class="fas fa-times"></i> Tolak
+                                   </button>
+                                </div>
                                 </td>
                             </tr>
                             @empty
@@ -119,6 +116,22 @@
         if (confirm('Setujui ' + selected.length + ' data yang dipilih?')) {
             document.getElementById('bulkForm').submit();
         }
+    }
+    function setujuiData(id) {
+    if (!confirm('Setujui data ini?')) return;
+
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route("verifikasi.setujui", "") }}/' + id;
+    form.style.display = 'none';
+
+    let csrf = document.createElement('input');
+    csrf.name = '_token';
+    csrf.value = '{{ csrf_token() }}';
+    form.appendChild(csrf);
+
+    document.body.appendChild(form);
+    form.submit();
     }
 
     function tolakData(id) {

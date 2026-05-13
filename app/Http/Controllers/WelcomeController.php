@@ -14,34 +14,40 @@ class WelcomeController extends Controller
     {
         $period = $request->get('period', 'monthly');
 
-        // Tentukan rentang tanggal
+        // Tentukan rentang tanggal sesuai periode
         $now = Carbon::now();
         switch ($period) {
             case 'daily':
-                $startDate = $now->copy()->subDays(6)->startOfDay();
-                $endDate = $now->copy()->endOfDay();
+                $startDate = $now->copy()->subDays(6)->startOfDay();   // 7 hari terakhir
+                $endDate   = $now->copy()->endOfDay();
                 break;
             case 'weekly':
-                $startDate = $now->copy()->subWeeks(3)->startOfWeek();
-                $endDate = $now->copy()->endOfWeek();
+                $startDate = $now->copy()->subWeeks(3)->startOfWeek();  // 4 minggu terakhir
+                $endDate   = $now->copy()->endOfWeek();
                 break;
             case 'yearly':
-                $startDate = $now->copy()->subYears(4)->startOfYear();
-                $endDate = $now->copy()->endOfYear();
+                $startDate = $now->copy()->subYears(4)->startOfYear();  // 5 tahun terakhir
+                $endDate   = $now->copy()->endOfYear();
                 break;
             case 'monthly':
             default:
-                $startDate = $now->copy()->subMonths(5)->startOfMonth();
-                $endDate = $now->copy()->endOfMonth();
+                $startDate = $now->copy()->subMonths(5)->startOfMonth(); // 6 bulan terakhir
+                $endDate   = $now->copy()->endOfMonth();
                 break;
         }
 
-        // 1. Total layanan dan kunjungan (seluruh data)
-        $totalLayanan = InputLayanan::where('status', 'disetujui')->sum('jumlah_layanan');
-        $totalKunjungan = InputLayanan::where('status', 'disetujui')->sum('jumlah_kunjungan');
+        // ========== 1. Total Layanan & Kunjungan dalam periode ==========
+        $totalLayanan = InputLayanan::where('status', 'disetujui')
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->sum('jumlah_layanan');
 
-        // 2. Instansi dengan layanan terbanyak
+        $totalKunjungan = InputLayanan::where('status', 'disetujui')
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->sum('jumlah_kunjungan');
+
+        // ========== 2. Instansi dengan layanan terbanyak dalam periode ==========
         $instansiLayananTerbanyak = InputLayanan::where('status', 'disetujui')
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_layanan) as total'))
             ->with('instansi')
             ->groupBy('instansi_id')
@@ -49,8 +55,9 @@ class WelcomeController extends Controller
             ->first();
         $namaInstansiLayananTerbanyak = $instansiLayananTerbanyak->instansi->nama_instansi ?? '-';
 
-        // 3. Instansi dengan kunjungan terbanyak
+        // ========== 3. Instansi dengan kunjungan terbanyak dalam periode ==========
         $instansiKunjunganTerbanyak = InputLayanan::where('status', 'disetujui')
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_kunjungan) as total'))
             ->with('instansi')
             ->groupBy('instansi_id')
@@ -58,7 +65,7 @@ class WelcomeController extends Controller
             ->first();
         $namaInstansiKunjunganTerbanyak = $instansiKunjunganTerbanyak->instansi->nama_instansi ?? '-';
 
-        // 4. Data pie chart (dalam periode)
+        // ========== 4. Data pie chart (dalam periode) ==========
         $pieData = InputLayanan::where('status', 'disetujui')
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_kunjungan) as total'))
@@ -70,7 +77,7 @@ class WelcomeController extends Controller
         $pieLabels = $pieData->map(fn($item) => $item->instansi->nama_instansi ?? 'Unknown')->toArray();
         $pieValues = $pieData->map(fn($item) => (int) $item->total)->toArray();
 
-        // 5. Data line chart (trend kunjungan per periode)
+        // ========== 5. Data line chart (trend kunjungan per periode) ==========
         $lineData = InputLayanan::where('status', 'disetujui')
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select(DB::raw($this->getDateSql($period, 'tanggal') . ' as period'), DB::raw('SUM(jumlah_kunjungan) as total'))
@@ -87,7 +94,7 @@ class WelcomeController extends Controller
         })->toArray();
         $lineValues = $lineData->map(fn($item) => (int) $item->total)->toArray();
 
-        // 6. Data tabel trend (per instansi dalam periode) tanpa kolom bulan/minggu
+        // ========== 6. Data tabel trend (per instansi dalam periode) ==========
         $trendData = InputLayanan::where('status', 'disetujui')
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select(
@@ -100,21 +107,13 @@ class WelcomeController extends Controller
             ->orderBy('total_kunjungan', 'desc')
             ->get();
 
-        // 7. Teks periode untuk ditampilkan di view
-        $periodeText = '';
+        // ========== 7. Teks periode untuk ditampilkan di view (sederhana) ==========
         switch ($period) {
-            case 'daily':
-                $periodeText = $startDate->format('d/m/Y') . ' - ' . $endDate->format('d/m/Y');
-                break;
-            case 'weekly':
-                $periodeText = 'Minggu ke-' . $startDate->weekOfYear . ' - ' . $endDate->weekOfYear . ' (' . $startDate->format('d/m') . ' - ' . $endDate->format('d/m') . ')';
-                break;
-            case 'monthly':
-                $periodeText = $startDate->format('F Y') . ' - ' . $endDate->format('F Y');
-                break;
-            case 'yearly':
-                $periodeText = $startDate->year . ' - ' . $endDate->year;
-                break;
+            case 'daily':   $periodeText = 'Harian'; break;
+            case 'weekly':  $periodeText = 'Mingguan'; break;
+            case 'monthly': $periodeText = 'Bulanan'; break;
+            case 'yearly':  $periodeText = 'Tahunan'; break;
+            default:        $periodeText = ucfirst($period); break;
         }
 
         return view('welcome', compact(
@@ -129,16 +128,11 @@ class WelcomeController extends Controller
     private function getDateSql($period, $column)
     {
         switch ($period) {
-            case 'daily':
-                return "DATE($column)";
-            case 'weekly':
-                return "YEARWEEK($column)";
-            case 'monthly':
-                return "DATE_FORMAT($column, '%Y-%m')";
-            case 'yearly':
-                return "YEAR($column)";
-            default:
-                return "DATE($column)";
+            case 'daily':   return "DATE($column)";
+            case 'weekly':  return "YEARWEEK($column)";
+            case 'monthly': return "DATE_FORMAT($column, '%Y-%m')";
+            case 'yearly':  return "YEAR($column)";
+            default:        return "DATE($column)";
         }
     }
-} 
+}
