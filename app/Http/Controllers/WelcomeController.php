@@ -18,35 +18,35 @@ class WelcomeController extends Controller
         $now = Carbon::now();
         switch ($period) {
             case 'daily':
-                $startDate = $now->copy()->subDays(6)->startOfDay();   // 7 hari terakhir
+                $startDate = $now->copy()->subDays(1)->startOfDay();   // 2 hari terakhir
                 $endDate   = $now->copy()->endOfDay();
                 break;
             case 'weekly':
-                $startDate = $now->copy()->subWeeks(3)->startOfWeek();  // 4 minggu terakhir
+                $startDate = $now->copy()->subWeeks(1)->startOfWeek();  // 2 minggu terakhir
                 $endDate   = $now->copy()->endOfWeek();
                 break;
             case 'yearly':
-                $startDate = $now->copy()->subYears(4)->startOfYear();  // 5 tahun terakhir
+                $startDate = $now->copy()->subYears(1)->startOfYear();  // 2 tahun terakhir
                 $endDate   = $now->copy()->endOfYear();
                 break;
             case 'monthly':
             default:
-                $startDate = $now->copy()->subMonths(5)->startOfMonth(); // 6 bulan terakhir
+                $startDate = $now->copy()->subMonths(1)->startOfMonth(); // 2 bulan terakhir
                 $endDate   = $now->copy()->endOfMonth();
                 break;
         }
 
         // ========== 1. Total Layanan & Kunjungan dalam periode ==========
-        $totalLayanan = InputLayanan::where('status', 'disetujui')
+        $totalLayanan = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->sum('jumlah_layanan');
 
-        $totalKunjungan = InputLayanan::where('status', 'disetujui')
+        $totalKunjungan = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->sum('jumlah_kunjungan');
 
         // ========== 2. Instansi dengan layanan terbanyak dalam periode ==========
-        $instansiLayananTerbanyak = InputLayanan::where('status', 'disetujui')
+        $instansiLayananTerbanyak = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_layanan) as total'))
             ->with('instansi')
@@ -56,7 +56,7 @@ class WelcomeController extends Controller
         $namaInstansiLayananTerbanyak = $instansiLayananTerbanyak->instansi->nama_instansi ?? '-';
 
         // ========== 3. Instansi dengan kunjungan terbanyak dalam periode ==========
-        $instansiKunjunganTerbanyak = InputLayanan::where('status', 'disetujui')
+        $instansiKunjunganTerbanyak = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_kunjungan) as total'))
             ->with('instansi')
@@ -66,7 +66,7 @@ class WelcomeController extends Controller
         $namaInstansiKunjunganTerbanyak = $instansiKunjunganTerbanyak->instansi->nama_instansi ?? '-';
 
         // ========== 4. Data pie chart (dalam periode) ==========
-        $pieData = InputLayanan::where('status', 'disetujui')
+        $pieData = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select('instansi_id', DB::raw('SUM(jumlah_kunjungan) as total'))
             ->with('instansi')
@@ -78,7 +78,7 @@ class WelcomeController extends Controller
         $pieValues = $pieData->map(fn($item) => (int) $item->total)->toArray();
 
         // ========== 5. Data line chart (trend kunjungan per periode) ==========
-        $lineData = InputLayanan::where('status', 'disetujui')
+        $lineData = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select(DB::raw($this->getDateSql($period, 'tanggal') . ' as period'), DB::raw('SUM(jumlah_kunjungan) as total'))
             ->groupBy('period')
@@ -95,7 +95,7 @@ class WelcomeController extends Controller
         $lineValues = $lineData->map(fn($item) => (int) $item->total)->toArray();
 
         // ========== 6. Data tabel trend (per instansi dalam periode) ==========
-        $trendData = InputLayanan::where('status', 'disetujui')
+        $trendData = InputLayanan::whereIn('status', ['pending', 'tervalidasi'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select(
                 'instansi_id',

@@ -73,7 +73,7 @@ class PetugasController extends Controller
         $data = InputLayanan::with('jenisLayanan')
                     ->where('id', $id)
                     ->where('user_id', auth()->id())
-                    ->where('status', 'pending')
+                    ->whereIn('status', ['pending', 'revisi'])
                     ->firstOrFail();
 
         $layanan = JenisLayanan::where('instansi_id', auth()->user()->instansi)->get();
@@ -89,7 +89,7 @@ class PetugasController extends Controller
     {
         $input = InputLayanan::where('id', $id)
                     ->where('user_id', auth()->id())
-                    ->where('status', 'pending')
+                    ->whereIn('status', ['pending', 'revisi'])
                     ->firstOrFail();
 
         $request->validate([
@@ -104,6 +104,10 @@ class PetugasController extends Controller
             'jenis_layanan_id' => $request->jenis_layanan_id,
             'jumlah_layanan' => $request->jumlah_layanan,
             'jumlah_kunjungan' => $request->jumlah_kunjungan,
+            'status' => 'pending', //kembali pending
+            'alasan_penolakan' => null //hapus alasan lama
+
+
         ]);
 
         return redirect()->route('petugas.riwayat')->with('success', 'Data berhasil diperbarui.');
@@ -113,7 +117,7 @@ class PetugasController extends Controller
     {
         $input = InputLayanan::where('id', $id)
                     ->where('user_id', auth()->id())
-                    ->where('status', 'pending')
+                    ->whereIn('status', ['pending', 'revisi'])
                     ->firstOrFail();
 
         $input->delete();

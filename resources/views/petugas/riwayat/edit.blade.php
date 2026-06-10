@@ -14,6 +14,12 @@
             </a>
         </div>
         <div class="card-body">
+        @if($data->status == 'revisi')
+            <div class="alert alert-danger">
+            <strong>Catatan Revisi:</strong><br>
+             {{ $data->alasan_penolakan }}
+        </div>
+        @endif
             <form action="{{ route('petugas.update', $data->id) }}" method="POST">
                 @csrf
                 {{-- Karena route pakai POST, kita tidak perlu @method PUT --}}

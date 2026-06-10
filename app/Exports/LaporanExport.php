@@ -33,7 +33,8 @@ class LaporanExport implements FromCollection, WithHeadings
                 'petugas'   => $item->user->nama ?? '-',
                 'instansi'  => $item->instansi->nama_instansi ?? '-',
                 'layanan'   => $item->jenisLayanan->nama_layanan ?? '-',
-                'jumlah'    => $item->jumlah_layanan,
+                'jumlah_layanan'    => $item->jumlah_layanan,
+                'jumlah_kunjungan'  => $item->jumlah_kunjungan,
                 'status'    => $item->status,
             ];
         });
@@ -41,6 +42,6 @@ class LaporanExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Tanggal', 'Petugas', 'Instansi', 'Layanan', 'Jumlah', 'Status'];
+        return ['Tanggal', 'Petugas', 'Instansi', 'Layanan', 'Jumlah_layanan', 'Jumlah_kunjungan' , 'Status'];
     }
 }

@@ -12,7 +12,7 @@ class VertifikasiController extends Controller
     public function index(Request $request)
         {
         $query = InputLayanan::with(['user', 'jenisLayanan', 'instansi'])
-                ->where('status', 'pending');
+                ->whereIn('status', ['pending', 'revisi']);
 
     // Filter berdasarkan instansi jika dipilih
     if ($request->filled('instansi_id')) {
@@ -40,9 +40,9 @@ class VertifikasiController extends Controller
         'ids.*' => 'exists:input_layanans,id'
     ]);
 
-    InputLayanan::whereIn('id', $request->ids)
+    InputLayanan::where('id', $request->ids)
                 ->where('status', 'pending')
-                ->update(['status' => 'disetujui']);
+                ->update(['status' => 'tervalidasi']);
 
     return redirect()->route('vertifikasi')->with('success', count($request->ids) . ' data berhasil disetujui.');
 }
@@ -50,7 +50,7 @@ class VertifikasiController extends Controller
     public function setujui($id)
     {
         $input = InputLayanan::findOrFail($id);
-        $input->status = 'disetujui';
+        $input->status = 'tervalidasi';
         $input->save();
 
         return redirect()->route('vertifikasi')->with('success', 'Data berhasil disetujui.');
@@ -63,7 +63,7 @@ class VertifikasiController extends Controller
         ]);
 
         $input = InputLayanan::findOrFail($id);
-        $input->status = 'ditolak';
+        $input->status = 'revisi';
         $input->alasan_penolakan = $request->alasan_penolakan;
         $input->save();
 

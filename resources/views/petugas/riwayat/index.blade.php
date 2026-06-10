@@ -33,22 +33,22 @@
                             <td class="text-center">{{ $item->jumlah_kunjungan }}</td>
                             <td class="text-center">
                                 @if ($item->status == 'pending')
-                                    <span class="badge badge-warning">Pending</span>
-                                @elseif ($item->status == 'disetujui')
-                                    <span class="badge badge-success">Disetujui</span>
-                                @elseif ($item->status == 'ditolak')
-                                    <span class="badge badge-danger">Ditolak</span>
+                                    <span class="badge badge-warning">Menunggu Validasi</span>
+                                @elseif ($item->status == 'tervalidasi')
+                                    <span class="badge badge-success">tervalidasi</span>
+                                @elseif ($item->status == 'revisi')
+                                    <span class="badge badge-danger">Perlu Revisi</span>
                                 @endif
                             </td>
                             <td>
-                                @if ($item->status == 'ditolak')
+                                @if ($item->status == 'revisi')
                                     {{ $item->alasan_penolakan ?? '-' }}
                                 @else
                                     -
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if ($item->status == 'pending')
+                                @if (in_array($item->status, ['pending', 'revisi']))
                                     <a href="{{ route('petugas.edit', $item->id) }}" class="btn btn-sm btn-warning" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>

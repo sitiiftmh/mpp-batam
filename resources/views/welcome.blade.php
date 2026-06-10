@@ -130,7 +130,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm card-stat">
             <div class="card-body">
-                <small>Instansi Terbanyak</small>
+                <small>Layanan Instansi Terbanyak</small>
                 <div class="fw-semibold">{{ $namaInstansiLayananTerbanyak }}</div>
             </div>
         </div>
@@ -138,7 +138,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm card-stat">
             <div class="card-body">
-                <small>Kunjungan Terbanyak</small>
+                <small>Kunjungan Instansi Terbanyak</small>
                 <div class="fw-semibold">{{ $namaInstansiKunjunganTerbanyak }}</div>
             </div>
         </div>

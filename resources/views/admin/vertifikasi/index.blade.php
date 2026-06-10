@@ -11,7 +11,7 @@
         <div class="col-md-6">
             <div class="alert alert-info">
                 <i class="fas fa-clock mr-2"></i>
-                Data Menunggu Verifikasi: <strong>{{ $totalPending }}</strong>
+                Data Menunggu Validasi: <strong>{{ $totalPending }}</strong>
             </div>
         </div>
         <div class="col-md-6">
@@ -75,10 +75,10 @@
                                 <td class="text-center" style="min-width: 160px;">
                                 <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: nowrap;">
                                    <button type="button" class="btn btn-sm btn-success" style="padding: 4px 10px; white-space: nowrap;" onclick="setujuiData({{ $item->id }})">
-                                       <i class="fas fa-check"></i> Setuju
+                                       <i class="fas fa-check"></i> Validasi
                                    </button>
                                     <button type="button" class="btn btn-sm btn-danger" style="padding: 4px 10px; white-space: nowrap;" onclick="tolakData({{ $item->id }})">
-                                        <i class="fas fa-times"></i> Tolak
+                                        <i class="fas fa-times"></i> Revisi
                                    </button>
                                 </div>
                                 </td>
@@ -135,7 +135,7 @@
     }
 
     function tolakData(id) {
-        let alasan = prompt("Masukkan alasan penolakan:");
+        let alasan = prompt("Masukkan catatan revisi:");
         
         if (alasan && alasan.trim() !== "") {
             let form = document.createElement('form');

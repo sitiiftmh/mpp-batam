@@ -39,7 +39,7 @@
 <li class="nav-item {{ $menuAdminVertifikasi ?? '' }}">
     <a class="nav-link" href="{{ route('vertifikasi') }}">
         <i class="fas fa-tasks"></i>
-        <span>Verifikasi Data</span>
+        <span>Monitoring dan Validasi Data Layanan</span>
     </a>
 </li>
 
