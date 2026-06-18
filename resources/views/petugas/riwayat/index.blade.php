@@ -19,7 +19,7 @@
                             <th>Jumlah Layanan</th>
                             <th>Jumlah Kunjungan</th>
                             <th>Status</th>
-                            <th>Alasan (Jika Ditolak)</th>
+                            <th>Catatan Revisi</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
