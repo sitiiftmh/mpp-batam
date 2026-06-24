@@ -99,11 +99,12 @@ class WelcomeController extends Controller
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->select(
                 'instansi_id',
+                'jenis_layanan_id',
                 DB::raw('SUM(jumlah_layanan) as total_layanan'),
                 DB::raw('SUM(jumlah_kunjungan) as total_kunjungan')
             )
-            ->with('instansi')
-            ->groupBy('instansi_id')
+            ->with(['instansi','jenislayanan'])
+            ->groupBy('instansi_id', 'jenis_layanan_id')
             ->orderBy('total_kunjungan', 'desc')
             ->get();
 

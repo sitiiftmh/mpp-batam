@@ -173,19 +173,25 @@
         <div class="table-responsive">
             <table class="table table-bordered table-sm mt-3">
                 <thead class="table-light">
-                    <tr><th>Instansi</th><th>Layanan</th><th>Kunjungan</th></tr>
-                </thead>
-                <tbody>
-                    @forelse($trendData as $item)
-                    <tr>
-                        <td>{{ $item->instansi->nama_instansi ?? '-' }}</td>
-                        <td>{{ number_format($item->total_layanan) }}</td>
-                        <td>{{ number_format($item->total_kunjungan) }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
-                    @endforelse
-                </tbody>
+    <tr>
+        <th>Instansi</th>
+        <th>Jenis Layanan</th>
+        <th>Jumlah Layanan</th>
+        <th>Jumlah Kunjungan</th>
+    </tr>
+</thead>
+<tbody>
+    @forelse($trendData as $item)
+    <tr>
+        <td>{{ $item->instansi->nama_instansi ?? '-' }}</td>
+        <td>{{ $item->jenisLayanan->nama_layanan ?? '-' }}</td>
+        <td>{{ number_format($item->total_layanan) }}</td>
+        <td>{{ number_format($item->total_kunjungan) }}</td>
+    </tr>
+    @empty
+    <tr><td colspan="4" class="text-center">Belum ada data</td></tr>
+    @endforelse
+</tbody>
             </table>
         </div>
     </div>
