@@ -28,6 +28,7 @@ Route::get('/dashboard', [DashboardController::class,'index']
 
 //laporan
 Route::get('/laporan/export', [DashboardController::class, 'exportLaporan'])->name('laporan.export');
+Route::get('/laporan/export-pdf', [DashboardController::class, 'exportLaporanPdf'])->name('laporan.export.pdf');
 
 //tambah akun
 Route::get('/user', [UserController::class, 'index'])->name('user'); 
@@ -54,7 +55,7 @@ Route::post('/layanan/update/{id}', [JenisLayananController::class,'update'])->n
 Route::delete('/layanan/{id}', [JenisLayananController::class,'destroy'])->name('layananDelete');
 
 //kelola vertifikasi
-Route::get('/Vertifikasi', [VertifikasiController::class, 'index'])->name('vertifikasi');
+Route::get('/verifikasi', [VertifikasiController::class, 'index'])->name('vertifikasi');
 Route::post('/verifikasi/bulk-setujui', [VertifikasiController::class, 'bulkSetujui'])->name('verifikasi.bulk.setujui');
 Route::post('/verifikasi/setujui/{id}', [VertifikasiController::class, 'setujui'])->name('verifikasi.setujui');
 Route::post('/verifikasi/tolak/{id}', [VertifikasiController::class, 'tolak'])->name('verifikasi.tolak');

@@ -13,26 +13,30 @@ class WelcomeController extends Controller
     public function index(Request $request)
     {
         $period = $request->get('period', 'monthly');
+        $month = $request->get('month', Carbon::now()->month);
+        $year  = $request->get('year', Carbon::now()->year);
 
         // Tentukan rentang tanggal sesuai periode
         $now = Carbon::now();
         switch ($period) {
             case 'daily':
-                $startDate = $now->copy()->subDays(1)->startOfDay();   // 2 hari terakhir
-                $endDate   = $now->copy()->endOfDay();
+                 $startDate = Carbon::create($year,$month,1)->startOfMonth(); // 2 hari terakhir
+                 $endDate   = Carbon::create($year,$month,1)->endOfMonth();
                 break;
             case 'weekly':
-                $startDate = $now->copy()->subWeeks(1)->startOfWeek();  // 2 minggu terakhir
-                $endDate   = $now->copy()->endOfWeek();
+                $startDate = Carbon::create($year,1,1)->startOfYear();  // 2 minggu terakhir
+                $endDate   = Carbon::create($year,12,31)->endOfYear();
+
                 break;
             case 'yearly':
-                $startDate = $now->copy()->subYears(1)->startOfYear();  // 2 tahun terakhir
-                $endDate   = $now->copy()->endOfYear();
+                 $startDate = Carbon::create($year,1,1)->startOfYear(); // 2 tahun terakhir
+                $endDate   = Carbon::create($year,12,31)->endOfYear();
                 break;
             case 'monthly':
             default:
-                $startDate = $now->copy()->subMonths(1)->startOfMonth(); // 2 bulan terakhir
-                $endDate   = $now->copy()->endOfMonth();
+
+                $startDate = Carbon::create($year, $month, 1)->startOfMonth(); // 2 bulan terakhir
+                $endDate   = Carbon::create($year, $month, 1)->endOfMonth();
                 break;
         }
 
@@ -110,6 +114,7 @@ class WelcomeController extends Controller
 
         // ========== 7. Teks periode untuk ditampilkan di view (sederhana) ==========
         switch ($period) {
+
             case 'daily':   $periodeText = 'Harian'; break;
             case 'weekly':  $periodeText = 'Mingguan'; break;
             case 'monthly': $periodeText = 'Bulanan'; break;
@@ -117,12 +122,20 @@ class WelcomeController extends Controller
             default:        $periodeText = ucfirst($period); break;
         }
 
+        // Data tahun
+        $years = InputLayanan::selectRaw('YEAR(tanggal) as tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        // Return ke view
+
         return view('welcome', compact(
             'totalLayanan', 'totalKunjungan',
             'namaInstansiLayananTerbanyak', 'namaInstansiKunjunganTerbanyak',
             'pieLabels', 'pieValues',
             'lineLabels', 'lineValues',
-            'trendData', 'period', 'periodeText'
+            'trendData', 'period', 'month', 'year', 'years', 'periodeText'
         ));
     }
 

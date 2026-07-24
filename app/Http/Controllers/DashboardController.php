@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Exports\LaporanExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LaporanPdfExport;
 use App\Models\Instansi;
 use App\Models\User;
 use App\Models\InputLayanan;
@@ -45,5 +46,26 @@ public function exportLaporan(Request $request)
         $fileName
     );
 }
+
+ public function exportLaporanPdf(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date'   => 'required|date|after_or_equal:start_date',
+            'instansi_id'=> 'nullable|exists:instansis,id'
+        ]);
+
+        $pdfExport = new LaporanPdfExport(
+            $request->start_date, 
+            $request->end_date, 
+            $request->instansi_id
+        );
+        
+        $pdf = $pdfExport->generate();
+        
+        $fileName = 'laporan_'.$request->start_date.'_'.$request->end_date.'.pdf';
+        
+        return $pdf->stream('laporan_'.$request->start_date.'_'.$request->end_date.'.pdf');
+    }
 
 }

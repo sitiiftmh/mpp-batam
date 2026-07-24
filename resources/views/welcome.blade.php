@@ -97,14 +97,57 @@
 <!-- ================= FILTER ================= -->
 <form method="GET" action="{{ route('welcome') }}" class="row mb-4">
     <div class="col-md-3">
-        <select name="period" class="form-select" onchange="this.form.submit()">
+        <select name="period" id="period" class="form-select" onchange="toggleMonth();this.form.submit()">
             <option value="daily" {{ $period == 'daily' ? 'selected' : '' }}>Harian</option>
             <option value="weekly" {{ $period == 'weekly' ? 'selected' : '' }}>Mingguan</option>
             <option value="monthly" {{ $period == 'monthly' ? 'selected' : '' }}>Bulanan</option>
             <option value="yearly" {{ $period == 'yearly' ? 'selected' : '' }}>Tahunan</option>
         </select>
     </div>
-    <div class="col-md-3"></div>
+
+   <!-- TAHUN -->
+    <div class="col-md-3">
+        <select name="year"
+                class="form-select"
+                onchange="this.form.submit()">
+            @foreach($years as $y)
+            <option value="{{ $y }}"
+                {{ $year==$y?'selected':'' }}>
+                {{ $y }}
+            </option>
+            @endforeach
+        </select>
+    </div>
+
+   <!-- Bulan -->
+    <div class="col-md-3" id ="monthDiv"
+    style="{{ $period =='monthly' ? '' : 'display:none' }}">
+    <select name="month"
+                class="form-select"
+                onchange="this.form.submit()">
+            @foreach([
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+            ] as $no=>$nama)
+            
+          <option value="{{ $no }}"
+                {{ $month==$no?'selected':'' }}>
+                {{ $nama }}
+            </option>
+
+            @endforeach   
+    </select>
+</div>
     <div class="col-md-3"></div>
     <div class="col-md-3"></div>
 </form>
@@ -248,6 +291,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // ================= PIE CHART =================
+
 new Chart(document.getElementById('pieChart'), {
     type: 'doughnut',
     data: {
@@ -263,6 +308,22 @@ new Chart(document.getElementById('lineChart'), {
         datasets: [{ data: {!! json_encode($lineValues) !!}, label: 'Kunjungan' }]
     }
 });
+// ================= TAMPIL / SEMBUNYIKAN PILIHAN BULAN =================
+function toggleMonth() {
+
+    let period = document.getElementById('period').value;
+
+    if (period === "monthly") {
+        document.getElementById("monthDiv").style.display = "";
+    } else {
+        document.getElementById("monthDiv").style.display = "none";
+    }
+
+}
+
+// Jalankan saat halaman pertama kali dibuka
+toggleMonth();
+
 </script>
 
 </body>

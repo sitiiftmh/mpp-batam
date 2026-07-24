@@ -21,7 +21,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('laporan.export') }}" method="GET">
+            <form action="{{ route('laporan.export') }}" method="GET" target='__blank'>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="start_date">Dari Tanggal</label>
@@ -43,8 +43,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">
+                     <!-- Tombol Export Excel (route lama) -->
+                    <button type="submit" formaction="{{ route('laporan.export') }}" class="btn btn-success">
                         <i class="fas fa-file-excel mr-2"></i> Export Excel
+                    </button>
+                    <!-- Tombol Export PDF (route baru) -->
+                    <button type="submit" formaction="{{ route('laporan.export.pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf mr-2"></i> Export PDF
                     </button>
                 </div>
             </form>
